@@ -27,8 +27,6 @@
 - (NSString *) filePaths{
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSAllDomainsMask, YES);
     return [[paths objectAtIndex:0] stringByAppendingPathComponent:@"db.db"];
-    //NSString *path = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"db.db"];
-    //return path;
 }
 
 - (void) openDatabase{
@@ -54,8 +52,8 @@
             place.adr = [[NSString alloc] initWithUTF8String:(char *) sqlite3_column_text(stm, 5)];
             place.full_img = [[NSString alloc] initWithUTF8String:(char *) sqlite3_column_text(stm, 6)];
             place.full_desc = [[NSString alloc] initWithUTF8String:(char *) sqlite3_column_text(stm, 7)];
-            place.log = [[NSString alloc] initWithUTF8String:(char *) sqlite3_column_text(stm, 8)];
-            place.lat = [[NSString alloc] initWithUTF8String:(char *) sqlite3_column_text(stm, 9)];
+            place.lat = [[NSString alloc] initWithUTF8String:(char *) sqlite3_column_text(stm, 8)];
+            place.log = [[NSString alloc] initWithUTF8String:(char *) sqlite3_column_text(stm, 9)];
             place.link = [[NSString alloc] initWithUTF8String:(char *) sqlite3_column_text(stm, 10)];
             [entries addObject:place];
         }

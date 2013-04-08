@@ -13,6 +13,7 @@
 #import "TableDataCell.h"
 #import "DataConnect.h"
 #import "DetailViewController.h"
+#import <CoreLocation/CoreLocation.h>
 
 @interface ViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate>{
 }

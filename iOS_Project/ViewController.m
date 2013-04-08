@@ -12,6 +12,7 @@
     Places *locations;
     Places *locationTmp;
     BOOL isSearch;
+    CLLocation *loc;
 }
 
 @end
@@ -34,7 +35,6 @@
     locationTmp =[[Places alloc] init];
     detailView = [[DetailViewController alloc] init];
     [dataConnect openDatabase];
-   // places = [dataConnect getPlaces:@"places"];
     self.searchBar.delegate = self;
     self.searchBar.showsCancelButton = NO;
     self.searchBar.showsScopeBar = NO;
@@ -49,8 +49,11 @@
     if (isSearch) {
         places = searchResults;
     }else{
-        places = [dataConnect getPlaces:@"places"];
-    }
+        //places = [dataConnect getPlaces:@"places"];
+        locationTmp = [[dataConnect getPlaces:@"places"] objectAtIndex:0];
+        loc = [[CLLocation alloc] initWithLatitude:[locationTmp.lat doubleValue] longitude:[locationTmp.log doubleValue]];
+        places = [self placesInRange:300000 fromGpsLocation:loc];
+        }
     [tableviewController reloadData];
 }
 
@@ -113,6 +116,39 @@
 - (void)viewDidUnload {
     [self setSearchBar:nil];
     [super viewDidUnload];
+}
+
+- (NSMutableArray *) placesInRange:(double)range fromGpsLocation:(CLLocation *)location{
+    NSMutableArray *result;
+    NSMutableArray *data;
+    NSMutableDictionary *tmp;
+    NSMutableArray *dis;
+    Places *place;
+    CLLocation *loc2;
+    result = [[NSMutableArray alloc] init];
+    data = [dataConnect getPlaces:@"places"];
+    tmp = [[NSMutableDictionary alloc] init];
+    dis = [[NSMutableArray alloc] init];
+    for (int x=0; x<[data count]; x++) {
+        place = [[Places alloc]init];
+        place = [data objectAtIndex:x];
+        loc2 = [[CLLocation alloc] initWithLatitude:[place.lat doubleValue] longitude:[place.log doubleValue]];
+        CLLocationDistance distance = [loc2 distanceFromLocation:location];
+        if (distance <= range) {
+            NSNumber *num = [NSNumber numberWithDouble:distance];
+            [tmp setObject:place forKey:num];
+            [dis addObject:num];
+        }
+    }
+    [dis sortUsingComparator:^NSComparisonResult(id a, id b) {
+        NSNumber *first = a;
+        NSNumber *second = b;
+        return [first compare:second];
+    }];
+    for (int x=0; x<[dis count]; x++){
+        [result addObject:[tmp objectForKey:[dis objectAtIndex:x]]];
+    }
+    return result;
 }
     
 @end
