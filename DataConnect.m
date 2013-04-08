@@ -25,10 +25,10 @@
 
 // Path to sqlite database file
 - (NSString *) filePaths{
-    //NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSAllDomainsMask, YES);
-    //return [[paths objectAtIndex:0] stringByAppendingPathComponent:@"db.db"];
-    NSString *path = [[NSBundle mainBundle] pathForResource:@"db" ofType:@"db"];
-    return path;
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSAllDomainsMask, YES);
+    return [[paths objectAtIndex:0] stringByAppendingPathComponent:@"db.db"];
+    //NSString *path = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"db.db"];
+    //return path;
 }
 
 - (void) openDatabase{
