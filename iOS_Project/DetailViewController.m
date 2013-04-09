@@ -34,9 +34,12 @@
     [super viewDidLoad];
     link = [NSURL URLWithString:location_detail.link];
     decription.text = location_detail.full_desc;
+    if([location_detail.full_desc isEqualToString:@""]){
+        decription.text = @"Xin lỗi! Hiện tại chúng tôi chưa có thông tin chi tiết về địa điểm này. Bạn vui lòng quay lại sau hoặc đóng góp thông tin cho địa điểm bằng cách gửi email tới: abc@gmail.com. Chúng tôi sẽ cập nhật thông tin nhanh nhất có thể.";
+    }
     self.navigationItem.title = location_detail.name;
     [imageLoading startAnimating];
-    [locationImageDetail setImageWithURL:[NSURL URLWithString:location_detail.full_img] placeholderImage: [UIImage imageNamed:@"placeholder.png"]];
+    [locationImageDetail setImageWithURL:[NSURL URLWithString:location_detail.full_img] placeholderImage: [UIImage imageNamed:@"placeholder"]];
     [imageLoading stopAnimating];
 	// Do any additional setup after loading the view.
 }

@@ -15,13 +15,12 @@
 #import "DetailViewController.h"
 #import <CoreLocation/CoreLocation.h>
 
-@interface ViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate>{
+@interface ViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, UISearchDisplayDelegate>{
 }
 @property (strong, nonatomic) IBOutlet UITableView *tableviewController;
 @property (strong, nonatomic) NSArray *imageURLs;
 @property (strong, nonatomic) NSMutableArray *places;
 @property (strong, nonatomic) NSMutableArray *searchResults;
-@property (strong, nonatomic) IBOutlet UISearchBar *searchBar;
 @property (strong, nonatomic) DetailViewController *detailView;
 
 - (IBAction)showMaps:(id)sender;

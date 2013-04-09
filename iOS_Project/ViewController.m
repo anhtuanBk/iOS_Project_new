@@ -11,8 +11,9 @@
     DataConnect *dataConnect;
     Places *locations;
     Places *locationTmp;
-    BOOL isSearch;
+    //BOOL isSearch;
     CLLocation *loc;
+    UISearchDisplayController *searchController;
 }
 
 @end
@@ -22,22 +23,18 @@
 @synthesize imageURLs;
 @synthesize places;
 @synthesize tableviewController;
-@synthesize searchBar;
 @synthesize searchResults;
 @synthesize detailView;
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    isSearch = NO;
+    //isSearch = NO;
     dataConnect = [[DataConnect alloc] init];
     locations = [[Places alloc] init];
     locationTmp =[[Places alloc] init];
     detailView = [[DetailViewController alloc] init];
     [dataConnect openDatabase];
-    self.searchBar.delegate = self;
-    self.searchBar.showsCancelButton = NO;
-    self.searchBar.showsScopeBar = NO;
 }
 
 - (void)didReceiveMemoryWarning
@@ -46,19 +43,14 @@
 }
 
 - (void) viewWillAppear:(BOOL)animated{
-    if (isSearch) {
-        places = searchResults;
-    }else{
-        //places = [dataConnect getPlaces:@"places"];
-        locationTmp = [[dataConnect getPlaces:@"places"] objectAtIndex:0];
-        loc = [[CLLocation alloc] initWithLatitude:[locationTmp.lat doubleValue] longitude:[locationTmp.log doubleValue]];
-        places = [self placesInRange:300000 fromGpsLocation:loc];
-        }
-    [tableviewController reloadData];
+    //places = [dataConnect getPlaces:@"places"];
+    locationTmp = [[dataConnect getPlaces:@"places"] objectAtIndex:0];
+    loc = [[CLLocation alloc] initWithLatitude:[locationTmp.lat doubleValue] longitude:[locationTmp.log doubleValue]];
+    places = [self placesInRange:300000 fromGpsLocation:loc];
 }
 
 - (NSInteger) numberOfSectionsInTableView:(UITableView *)tableView{
-    if (isSearch) {
+    if (tableView == self.searchDisplayController.searchResultsTableView) {
         return [searchResults count];
     }
     return [places count];
@@ -74,19 +66,19 @@
     if (cell == nil) {
         cell = (TableDataCell *)[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
-    if (isSearch) {
+    if (tableView == self.searchDisplayController.searchResultsTableView) {
         locations = [searchResults objectAtIndex:indexPath.section];
     }else{
         locations = [places objectAtIndex:indexPath.section];
     }
     cell.locationType.text = locations.type;
     cell.locationAddress.text = locations.adr;
-    [cell.locationImage setImageWithURL:[NSURL URLWithString:locations.thumb_img] placeholderImage: [UIImage imageNamed:@"placeholder.png"]];
+    [cell.locationImage setImageWithURL:[NSURL URLWithString:locations.thumb_img] placeholderImage: [UIImage imageNamed:@"placeholder"]];
     return cell;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section{
-    if (isSearch) {
+    if (tableView == self.searchDisplayController.searchResultsTableView) {
         locations = [searchResults objectAtIndex:section];
     }else{
         locations = [places objectAtIndex:section];
@@ -95,7 +87,7 @@
 }
 
 - (NSIndexPath *) tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    if (isSearch) {
+    if (tableView == self.searchDisplayController.searchResultsTableView) {
         locationTmp = [searchResults objectAtIndex:indexPath.section];
     }else{
         locationTmp = [places objectAtIndex:indexPath.section];
@@ -114,7 +106,6 @@
     }
 }
 - (void)viewDidUnload {
-    [self setSearchBar:nil];
     [super viewDidUnload];
 }
 
@@ -150,5 +141,17 @@
     }
     return result;
 }
-    
+
+- (void) filterContentForSearchText: (NSString *) searchText scope: (NSString*) scope{
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(name contains[cd] %@) OR (adr contains[cd] %@) OR (type contains[cd] %@)", searchText, searchText, searchText];
+    searchResults = (NSMutableArray *)[places filteredArrayUsingPredicate:predicate];
+}
+
+- (BOOL) searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchString:(NSString *)searchString{
+    [self filterContentForSearchText:searchString
+                               scope:[[self.searchDisplayController.searchBar scopeButtonTitles]
+                                      objectAtIndex:[self.searchDisplayController.searchBar
+                                                     selectedScopeButtonIndex]]];
+    return YES;
+}
 @end
