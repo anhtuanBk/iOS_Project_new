@@ -11,25 +11,22 @@
     DataConnect *dataConnect;
     Places *locations;
     Places *locationTmp;
-    //BOOL isSearch;
     CLLocation *loc;
-    UISearchDisplayController *searchController;
 }
 
 @end
 
 @implementation ViewController
 
-@synthesize imageURLs;
 @synthesize places;
 @synthesize tableviewController;
 @synthesize searchResults;
 @synthesize detailView;
+@synthesize originalTableView;
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    //isSearch = NO;
     dataConnect = [[DataConnect alloc] init];
     locations = [[Places alloc] init];
     locationTmp =[[Places alloc] init];
@@ -68,6 +65,7 @@
     }
     if (tableView == self.searchDisplayController.searchResultsTableView) {
         locations = [searchResults objectAtIndex:indexPath.section];
+        cell = (TableDataCell *)[self.originalTableView dequeueReusableCellWithIdentifier:identifier];
     }else{
         locations = [places objectAtIndex:indexPath.section];
     }
@@ -106,6 +104,7 @@
     }
 }
 - (void)viewDidUnload {
+    [self setOriginalTableView:nil];
     [super viewDidUnload];
 }
 
@@ -153,5 +152,9 @@
                                       objectAtIndex:[self.searchDisplayController.searchBar
                                                      selectedScopeButtonIndex]]];
     return YES;
+}
+
+- (void)searchDisplayController:(UISearchDisplayController *)controller didLoadSearchResultsTableView:(UITableView *)tableView{
+    tableView.rowHeight = 120;
 }
 @end

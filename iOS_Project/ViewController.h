@@ -17,8 +17,8 @@
 
 @interface ViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, UISearchDisplayDelegate>{
 }
+@property (strong, nonatomic) IBOutlet UITableView *originalTableView;
 @property (strong, nonatomic) IBOutlet UITableView *tableviewController;
-@property (strong, nonatomic) NSArray *imageURLs;
 @property (strong, nonatomic) NSMutableArray *places;
 @property (strong, nonatomic) NSMutableArray *searchResults;
 @property (strong, nonatomic) DetailViewController *detailView;
